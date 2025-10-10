@@ -112,6 +112,54 @@ removerBotao.addEventListener('click', () => {
   removerFilme(indice, filmeDiv);
 });
 
+// C. ANEXAR ELEMENTOS (appendChild)
+// Monta a estrutura hierárquica:
+// filmeDiv
+//  |-- tituloH3
+//  |-- sinopseP
+//  |-- removerBotao
+filmeDiv.appendChild(tituloH3);
+filmeDiv.appendChild(sinopseP);
+filmeDiv.appendChild(removerBotao);
+
+// D. INSERÇÃO NO DOM FINAL
+// Adiciona o filme montado (filmeDiv) dentro do container principal na página.
+listaFilmesContainer.appendChild(filmeDiv);
+}
+
+// ----------------------------------------------------------------------------------
+// FUNÇÃO PRINCIPAL DE ADIÇÃO (Manipulador do Formulário)
+// ----------------------------------------------------------------------------------
+/**
+ * Lida com o envio do formulário, captura os dados e salva o filme.
+ * @param {Event} evento - O evento de 'submit' do formulário.
+ */
+function adicionarFilme(evento) {
+    // 3. Previne o recarregamento da página
+    // O comportamento padrão de um formulário é recarregar a página. O preventDefault() impede isso.
+    evento.preventDefault();
+
+    // 4. Captura os valores dos campos
+    const tituloInput = document.getElementById('titulo');
+    const sinopseInput = document.getElementById('sinopse');
+
+// Cria o objeto JavaScript com os dados
+const novoFilme = {
+    titulo: tituloInput.value,
+    sinopse: sinopseInput.value
+};
+
+// 5. Armazena o filme no Array
+// O método .push() adiciona o novo objeto no final do array 'catalogo'.
+catalogo.push(novoFilme);
+
+// 6. Renderiza na Tela
+// Passamos o novo objeto e seu índice (que é sempre o último, ou seja, tamanho - 1)
+renderizarFilme(novoFilme, catalogo.length - 1);
+
+// 7. Limpa o formulário
+// O método .reset() limpa todos os campos do formulário para o próximo cadastro.
+
 
 
 
