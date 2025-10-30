@@ -4,7 +4,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Catálogo de Filmes - Fase 2: Cadastro Manual Consumo de API</title>
+<title>Catálogo de Filmes - Fase 3: Exibindo Mais Dados</title>
 <link rel="stylesheet" href="style.css">
 
 </head>
@@ -16,13 +16,8 @@
 <h2>Adicionar Novo Filme (Busca por API)</h2>
 <div>
 <label for="titulo">Título do Filme:</label>
-<input type="text" id="titulo" required>
+<input type="text" id="titulo" required> 
 </div>
-<div>
-<label for="sinopse">Sinopse:</label>
-<textarea id="sinopse" required></textarea>
-</div>
-
 <button type="submit">Buscar e Adicionar Filme</button>
 </form>
 <hr>
@@ -35,7 +30,7 @@
 
 <script>
 // A CHAVE SECRETA DA API OMDb (Substitua este string pela sua chave real!)
-const API_KEY = '463ada0f';
+const API_KEY = '463ada0f'; 
 
 // 1. ARMAZENAMENTO DE DADOS 
 const catalogo = [];
@@ -46,7 +41,7 @@ const tituloInput = document.getElementById('titulo');
 const listaFilmesContainer = document.getElementById('lista-filmes');
 
 // ------------------------------------------------------------------
-// // FUNÇÃO DE REMOÇÃO (Mantida da fase 1)
+// FUNÇÃO DE REMOÇÃO 
 // ------------------------------------------------------------------
 function removerFilme(indice, elementoDOM) {
     catalogo.splice(indice, 1);
@@ -58,11 +53,11 @@ function removerFilme(indice, elementoDOM) {
 }
 
 // -------------------------------------------------------------
-// FUNÇÃO DE RENDERIZAÇÃO (Adaptada para incluir o pôster)
+// FUNÇÃO DE RENDERIZAÇÃO (ATUALIZADA)
 // -------------------------------------------------------------
 function renderizarFilme(filme, indice) {
-    if (catalogo.length === 1) {
-        listaFilmesContainer.innerHTML = '';
+    if (catalogo.length === 1 && listaFilmesContainer.querySelector('p')) {
+        listaFilmesContainer.innerHTML = ''; 
     }
 
     const filmeDiv = document.createElement('div');
@@ -72,7 +67,7 @@ function renderizarFilme(filme, indice) {
 const imagemPoster = document.createElement('img');
 imagemPoster.src = filme.poster && filme.poster !== 'N/A'
                    ? filme.poster
-                   : 'https://via,placeholder.com/100x150?text=Poster+Nao+Disponivel';
+                   : 'https://via.placeholder.com/100x150?text=Poster+Nao+Disponivel';
 imagemPoster.alt = `Pôster do filme ${filme.titulo}`;
 imagemPoster.classList.add('filme-poster');
 
@@ -83,6 +78,15 @@ infoDiv.classList.add('filme-info');
 const tituloH3 = document.createElement('h3');
 tituloH3.textContent = filme.titulo;
 
+// NOVO: Elemento para o Ano de Lançamento
+const infoExtraDiv = document.createElement('div');
+infoExtraDiv.classList.add('filme-extra-info');
+infoExtraDiv.innerHTML = `
+    <span class="filme-ano">Ano: ${filme.ano}</span>
+    <span class="filme-rating">Nota IMDb: ${filme.imdbRating}</span>
+`;
+
+
 const sinopseP = document.createElement('p');
 sinopseP.textContent = filme.sinopse;
 
@@ -92,6 +96,7 @@ removerBotao.classList.add('btn-remover');
 
 // C. Evento de Remoção
 removerBotao.addEventListener('click', () => {
+    // Usa o índice armazenado para remover o item correto do array
     const indiceAtual = catalogo.findIndex(f => f.titulo === filme.titulo);
     if (indiceAtual > -1) {
           removerFilme(indiceAtual, filmeDiv);
@@ -100,6 +105,7 @@ removerBotao.addEventListener('click', () => {
 
 // D. Montagem do DOM
 infoDiv.appendChild(tituloH3);
+infoDiv.appendChild(infoExtraDiv); // Adiciona a div com Ano e Nota
 infoDiv.appendChild(sinopseP);
 infoDiv.appendChild(removerBotao);
 
@@ -110,7 +116,7 @@ listaFilmesContainer.appendChild(filmeDiv);
 }
 
 // ----------------------------------------------------------------------------------
-// FUNÇÃO PRINCIPAL DE ADIÇÃO (Assíncrona para a API)
+// FUNÇÃO PRINCIPAL DE ADIÇÃO (ATUALIZADA)
 // ----------------------------------------------------------------------------------
 async function adicionarFilme(evento) {
     evento.preventDefault();
@@ -125,12 +131,15 @@ try {
     const resposta = await fetch(url);
     const dadosDoFilme = await resposta.json();
 
-    if (dadosDoFilme.response === "True") {
+    if (dadosDoFilme.Response === "True") {
 
         const novoFilme = {
             titulo: dadosDoFilme.Title,
             sinopse: dadosDoFilme.Plot,
             poster: dadosDoFilme.Poster,
+            // NOVOS DADOS COLETADOS DA API
+            ano: dadosDoFilme.Year || 'N/A', // Coleta o ano
+            imdbRating: dadosDoFilme.imdbRating || 'N/A' // Coleta a nota
         };
 
         catalogo.push(novoFilme);
